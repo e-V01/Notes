@@ -12,19 +12,12 @@ struct DetailView: View {
     let count: Int
     let index: Int
     
+    @State private var isCreditsPresented: Bool = false
+    
     var body: some View {
         VStack(alignment: .center, spacing: 3) {
            // HEADER
-            HStack {
-                Capsule()
-                    .frame(height: 1)
-                
-                Image(systemName: "note.text")
- 
-                Capsule()
-                    .frame(height: 1)
-            }
-            .foregroundStyle(.accent)
+            HeaderView(title: "")
           // CONTENT
             Spacer()
             ScrollView(.vertical) {
@@ -38,14 +31,21 @@ struct DetailView: View {
             HStack(alignment: .center) {
                 Image(systemName: "gear")
                     .imageScale(.large)
-                
+
                     Spacer()
                 
                 Text("\(index + 1) / \(count)")
                 
                 Spacer()
+                
                 Image(systemName: "info.circle")
                     .imageScale(.large)
+                    .onTapGesture {
+                        isCreditsPresented.toggle()
+                    }
+                    .sheet(isPresented: $isCreditsPresented) {
+                        CreditsView()
+                    }
             }
             .foregroundStyle(.secondary)
         }
