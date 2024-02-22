@@ -55,59 +55,63 @@ struct ContentView: View {
     }
 
     var body: some View {
-        VStack {
-            HStack(alignment: .center, spacing: 6) {
-                TextField("Add New Note", text: $text)
-                    
-                Button {
-                    // 1. Only the buttons's action when the text field is not empty
-                    guard text.isEmpty == false else { return }
-                    // 2. Create a new note item and initialize it with the text value
-                    let note = Note(id: UUID(), text: text)
-                    // 3. Add the new note item to the notes array (append)
-                    notes.append(note)
-                    // 4. Make the next field empty
-                    text = ""
-                    // 5. Save the notes (function)
-                    save()
-                } label: {
-                    Image(systemName: "plus.circle")
-                        .font(.system(size: 42, weight: .semibold))
-                }
-                .fixedSize()
-                .buttonStyle(PlainButtonStyle())
-                .foregroundStyle(.accent)
-            }
-            Spacer()
-            
-            if notes.count >= 1 {
-                List {
-                    ForEach(0..<notes.count, id: \.self) { i in
-                        HStack {
-                            Capsule()
-                                .frame(width: 4)
-                                .foregroundStyle(.accent)
-                            Text(notes[i].text)
-                                .lineLimit(1)
-                                .padding(.leading, 5)
-                        }
+        NavigationStack { // to be abel to see the navigationLink changes had to wrap it into NavStack (navView was deprecated)
+            VStack {
+                HStack(alignment: .center, spacing: 6) {
+                    TextField("Add New Note", text: $text)
+                        
+                    Button {
+                        // 1. Only the buttons's action when the text field is not empty
+                        guard text.isEmpty == false else { return }
+                        // 2. Create a new note item and initialize it with the text value
+                        let note = Note(id: UUID(), text: text)
+                        // 3. Add the new note item to the notes array (append)
+                        notes.append(note)
+                        // 4. Make the next field empty
+                        text = ""
+                        // 5. Save the notes (function)
+                        save()
+                    } label: {
+                        Image(systemName: "plus.circle")
+                            .font(.system(size: 42, weight: .semibold))
                     }
-                    .onDelete(perform: delete)
+                    .fixedSize()
+                    .buttonStyle(PlainButtonStyle())
+                    .foregroundStyle(.accent)
                 }
-            } else {
                 Spacer()
-                Image(systemName: "note.text")
-                    .resizable()
-                    .scaledToFit()
-                    .foregroundStyle(.gray)
-                    .opacity(0.25)
-                    .padding(25)
-                Spacer()
+                
+                if notes.count >= 1 {
+                    List {
+                        ForEach(0..<notes.count, id: \.self) { i in
+                            NavigationLink(destination: DetailView(note: notes[i], count: notes.count, index: i)) {
+                                HStack {
+                                    Capsule()
+                                        .frame(width: 4)
+                                        .foregroundStyle(.accent)
+                                    Text(notes[i].text)
+                                        .lineLimit(1)
+                                        .padding(.leading, 5)
+                                }
+                            }
+                        }
+                        .onDelete(perform: delete)
+                    }
+                } else {
+                    Spacer()
+                    Image(systemName: "note.text")
+                        .resizable()
+                        .scaledToFit()
+                        .foregroundStyle(.gray)
+                        .opacity(0.25)
+                        .padding(25)
+                    Spacer()
+                }
             }
+            .navigationTitle("Notes")
+            .onAppear {
+                load()
         }
-        .navigationTitle("Notes")
-        .onAppear {
-            load()
         }
     }
 }
