@@ -26,7 +26,9 @@ struct DetailView: View {
                 .fontWeight(.semibold)
                 .multilineTextAlignment(.center)
             }
+            
             Spacer()
+            
         // FOOTER
             HStack(alignment: .center) {
                 Image(systemName: "gear")
