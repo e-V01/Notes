@@ -13,6 +13,10 @@ struct SettingsView: View {
     @State private var value: Float = 1.0 
     // store sliders value
     
+    func update() {
+        lineCount = Int(value)
+    }
+    
     var body: some View {
         VStack(spacing: 8) {
             // header
@@ -21,7 +25,13 @@ struct SettingsView: View {
             Text("Lines: \(lineCount)".uppercased())
                 .fontWeight(.bold)
             // slider
-            Slider(value: $value, in: 1...4, step: 1)
+            // custom Bindinng (get-set, in)
+            Slider(value: Binding(get: {
+                self.value
+            }, set: { (newValue) in
+                self.value = newValue
+                self.update()
+            }), in: 1...4, step: 1)
                 .tint(.accentColor)
         }
     }
